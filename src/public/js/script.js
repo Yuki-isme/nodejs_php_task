@@ -24,6 +24,7 @@ const listJs = {
 
     initDataTable: async (data) => {
         let columns = [];
+        let searchCols = [];
         let columnDefs = [
             {"targets": [], "orderable": false},
             {"targets": [], "visible": false}
@@ -32,7 +33,6 @@ const listJs = {
             if (column.onlyQuery === false) {
                 if (column.relation === false) {
                     columns.push({'data': column.field, title: column.label});
-
                 } else {
                     columns.push({'data': column.relation.alias_name, title: column.label});
                 }
@@ -41,6 +41,12 @@ const listJs = {
                 }
                 if (column.hidden === true) {
                     columnDefs[1].targets.push(column.index);
+                }
+                //init search value for column
+                if (typeof data.filter[column.index] === 'string') {
+                    searchCols.push({search: data.filter[column.index]});
+                } else {
+                    searchCols.push(null);
                 }
             }
         });
@@ -55,6 +61,10 @@ const listJs = {
             columnDefs: columnDefs,
             displayStart: 0,
             columns: columns,
+            searchCols: searchCols,
+            search: {
+                search: typeof data.search === 'string' ? data.search : '',
+            },
             ajax: {
                 url: `${listJs.url}${listJs.module}/ajax/getRecords`,
                 method: 'POST',
@@ -66,17 +76,12 @@ const listJs = {
             },
             initComplete: function () {
                 //search by column
-                if (typeof data.search === 'string') {
-                    oTable.search(data.search);
-                }
                 oTable.columns().every(function () {
                     let column = this;
                     let title = column.footer().textContent;
                     let input = document.createElement('input');
                     if (title !== 'Action') {
-                        if (data.filter[column[0][0]] !== '') {
-                            input.value = typeof data.filter[column[0][0]] !== 'undefined' ? data.filter[column[0][0]] : '';
-                        }
+                        input.value = typeof data.filter[column[0][0]] === 'string' ? data.filter[column[0][0]] : '';
                         input.placeholder = title;
                         column.footer().replaceChildren(input);
 

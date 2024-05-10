@@ -132,9 +132,6 @@ const Model = {
         let dateFormat = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat)?.db;
         let timeFormat = DateTime.timeFormats.find(format => format.format === DateTime.timeFormat)?.db;
 
-        if (req.body.draw === '1' && typeof req.session.module[model.module].listing.search === 'string') {
-            req.body.search.value = req.session.module[model.module].listing.search;
-        }
         req.session.module[model.module].listing.search = req.body.search.value;
 
         await model.fieldDefs.forEach((field) => {
@@ -151,15 +148,7 @@ const Model = {
                 console.log(`\r\n${Model.generateFieldHTML(req, model, field)}`);
                 select += Model.generateFieldHTML(req, model, field);
                 if (field.relation === false) {
-                    // if (field.type === 'datetime') {
-                    //     select += `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}') AS ${field.field}`;
-                    // } else {
-                    //     select += `${field.field}`;
-                    // }
                     if (typeof req.body.columns !== 'undefined') {
-                        if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
-                            req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
-                        }
                         if (req.body.columns[field.index].search.value !== ``) {
                             where += where === `` ? `\r\nWHERE ` : ` AND `;
                             if (field.type === 'datetime') {
@@ -172,15 +161,15 @@ const Model = {
                     }
                     if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
                         search += search === `` ? search : ` OR `;
-                        search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
+                        if (field.type === 'datetime') {
+                            search += `DATE_FORMAT(${req.body.columns[field.index].data}, '${dateFormat} ${timeFormat}') LIKE '%${req.body.search.value}%'`;
+                        } else {
+                            search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
+                        }
                     }
                 } else {
-                    // select += `${field.relation.table}.${field.relation.field} AS ${field.relation.alias_name}`;
                     from += `\r\nINNER JOIN ${field.relation.table} ON ${field.relation.table}.id = ${model.table}.${field.field}`;
                     if (typeof req.body.columns !== 'undefined') {
-                        if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
-                            req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
-                        }
                         if (req.body.columns[field.index].search.value !== ``) {
                             where += where === `` ? `\r\nWHERE ` : ` AND `;
                             where += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.columns[field.index].search.value}%'`;

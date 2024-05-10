@@ -71,6 +71,55 @@ const Model = {
         return concat;
     },
 
+    generateFieldHTML: (req, model, field) => {
+        let dateFormat = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat)?.db;
+        let timeFormat = DateTime.timeFormats.find(format => format.format === DateTime.timeFormat)?.db;
+        let select = ``;
+        if (field.quick_edit) {
+            let concatList = [];
+            let customSelect, asField;
+            concatList.push(`'<div class="quick-edit" data-field="${field.field}" data-relation="${field.relation === false ? field.relation : JSON.stringify(field.relation)}">'`);
+            concatList.push(`'<div class="">'`);
+
+            if (field.relation === false) {
+                if (field.type === 'datetime') {
+                    customSelect = `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}')`;
+                } else {
+                    customSelect = `${field.field}`;
+                }
+                asField = `AS ${field.field}`;
+            } else {
+                customSelect = `${field.relation.table}.${field.relation.field}`;
+                asField = `AS ${field.relation.alias_name}`;
+            }
+
+            concatList.push(`'<p class="">'`);
+            concatList.push(`${customSelect}`);
+            concatList.push(`'</p>'`);
+            concatList.push(`'<span class="edit-icon"></span>'`);
+
+            concatList.push(`'</div>'`);
+            concatList.push(`'</div>'`);
+
+            concatList.forEach((value) => {
+                select += select === `` ? `CONCAT(${value}` : `, ${value}`;
+            });
+            select += `) ${asField}`;
+        } else {
+            if (field.relation === false) {
+                if (field.type === 'datetime') {
+                    select = `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}') AS ${field.field}`;
+                } else {
+                    select = `${field.field}`;
+                }
+            } else {
+                select = `${field.relation.table}.${field.relation.field} AS ${field.relation.alias_name}`;
+            }
+        }
+
+        return select;
+    },
+
     buildQueryGetRecords: async (req, model) => {
         let select = ``;
         let from = `\r\nFROM ${model.table}`;
@@ -98,46 +147,50 @@ const Model = {
                 select += `${model.table}.${field.field}`;
             } else if (field.field === 'action') {
                 select += `${Model.generateActionHTML(req, model)} AS action`;
-            } else if (field.relation === false) {
-                if (field.type === 'datetime') {
-                    select += `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}') AS ${field.field}`;
-                } else {
-                    select += `${field.field}`;
-                }
-                if (typeof req.body.columns !== 'undefined') {
-                    if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
-                        req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
-                    }
-                    if (req.body.columns[field.index].search.value !== ``) {
-                        where += where === `` ? `\r\nWHERE ` : ` AND `;
-                        if (field.type === 'datetime') {
-                            where += `DATE_FORMAT(${req.body.columns[field.index].data}, '${dateFormat} ${timeFormat}') LIKE '%${req.body.columns[field.index].search.value}%'`;
-                        } else {
-                            where += `${req.body.columns[field.index].data} LIKE '%${req.body.columns[field.index].search.value}%'`;
-                        }
-                    }
-                    req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
-                }
-                if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
-                    search += search === `` ? search : ` OR `;
-                    search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
-                }
             } else {
-                select += `${field.relation.table}.${field.relation.field} AS ${field.relation.alias_name}`;
-                from += `\r\nINNER JOIN ${field.relation.table} ON ${field.relation.table}.id = ${model.table}.${field.field}`;
-                if (typeof req.body.columns !== 'undefined') {
-                    if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
-                        req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
+                console.log(`\r\n${Model.generateFieldHTML(req, model, field)}`);
+                select += Model.generateFieldHTML(req, model, field);
+                if (field.relation === false) {
+                    // if (field.type === 'datetime') {
+                    //     select += `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}') AS ${field.field}`;
+                    // } else {
+                    //     select += `${field.field}`;
+                    // }
+                    if (typeof req.body.columns !== 'undefined') {
+                        if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
+                            req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
+                        }
+                        if (req.body.columns[field.index].search.value !== ``) {
+                            where += where === `` ? `\r\nWHERE ` : ` AND `;
+                            if (field.type === 'datetime') {
+                                where += `DATE_FORMAT(${req.body.columns[field.index].data}, '${dateFormat} ${timeFormat}') LIKE '%${req.body.columns[field.index].search.value}%'`;
+                            } else {
+                                where += `${req.body.columns[field.index].data} LIKE '%${req.body.columns[field.index].search.value}%'`;
+                            }
+                        }
+                        req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
                     }
-                    if (req.body.columns[field.index].search.value !== ``) {
-                        where += where === `` ? `\r\nWHERE ` : ` AND `;
-                        where += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.columns[field.index].search.value}%'`;
+                    if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
+                        search += search === `` ? search : ` OR `;
+                        search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
                     }
-                    req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
-                }
-                if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
-                    search += search === `` ? search : ` OR `;
-                    search += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.search.value}%'`;
+                } else {
+                    // select += `${field.relation.table}.${field.relation.field} AS ${field.relation.alias_name}`;
+                    from += `\r\nINNER JOIN ${field.relation.table} ON ${field.relation.table}.id = ${model.table}.${field.field}`;
+                    if (typeof req.body.columns !== 'undefined') {
+                        if (req.body.draw === '1' && typeof req.session.module[model.module].listing.filter[field.index] !== 'undefined') {
+                            req.body.columns[field.index].search.value = req.session.module[model.module].listing.filter[field.index];
+                        }
+                        if (req.body.columns[field.index].search.value !== ``) {
+                            where += where === `` ? `\r\nWHERE ` : ` AND `;
+                            where += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.columns[field.index].search.value}%'`;
+                        }
+                        req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
+                    }
+                    if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
+                        search += search === `` ? search : ` OR `;
+                        search += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.search.value}%'`;
+                    }
                 }
             }
         });
@@ -152,7 +205,7 @@ const Model = {
         req.session.module[model.module].listing.query.from = from;
         req.session.module[model.module].listing.query.where = where === `` ? '\r\nWHERE 1=1' : where;
 
-        // console.log(query);
+        console.log(query);
         // console.log();
         return [query, queryCount];
     },

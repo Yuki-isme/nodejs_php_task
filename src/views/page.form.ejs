@@ -1,0 +1,99 @@
+<div class="col-12">
+    <div style="border: 5px solid #bdbdbd; border-radius: 10px; padding: 20px;">
+        <form action="<%- url + data.module + '/' + data.action %>" method="post" id="form">
+            <div class="row">
+                <div class="col-12">
+                    <h2><%- title %></h2>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Account Number</label>
+                        <select class="form-select" name="account_id" id="account_id" required>
+                            <% data.accounts.forEach((value, index) => { %>
+                                <option value="<%- value.id %>" <%- typeof data.record !== 'undefined' && data.record.account_id === value.id ? "selected" : ""%>><%- value.name %></option>
+                            <% }); %>
+                        </select>
+                        <div id="error-message-account_id" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="form-label required">Bill ID <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                        <input class="form-control" name="bill_id" id="bill_id" type="text" value="<%- typeof data.record !== 'undefined' ? data.record.bill_id : '' %>" required>
+                        <div id="error-message-bill_id" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="form-label required">Amount <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                        <input class="form-control" name="amount" id="amount" type="text" value="<%- typeof data.record !== 'undefined' ? data.record.amount : '' %>" required>
+                        <div id="error-message-amount" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <select class="form-select" name="service_id" id="service_id" required>
+                            <% data.services.forEach((value, index) => { %>
+                                <option value="<%- value.id %>" <%- typeof data.record !== 'undefined' && data.record.service_id === value.id ? "selected" : ""%>><%- value.name %></option>
+                            <% }); %>
+                        </select>
+                        <div id="error-message-service_id" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category_id" id="category_id" required>
+                            <% data.categories.forEach((value, index) => { %>
+                                <option value="<%- value.id %>" <%- typeof data.record !== 'undefined' && data.record.category_id === value.id ? "selected" : ""%>><%- value.name %></option>
+                            <% }); %>
+                        </select>
+                        <div id="error-message-category_id" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Payment Status</label>
+                        <select class="form-select" name="payment_status_id" id="payment_status_id" required>
+                            <% data.paymentStatuses.forEach((value, index) => { %>
+                                <option value="<%- value.id %>" <%- typeof data.record !== 'undefined' && data.record.payment_status_id === value.id ? "selected" : ""%>><%- value.name %></option>
+                            <% }); %>
+                        </select>
+                        <div id="error-message-status_id" class="error-message text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label class="form-label required">Close Date <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                        <input class="form-control" type="input" name="closed_date" id="closed_date" value="<%- typeof data.record !== 'undefined' ? data.record.closed_date : '' %>">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label class="form-label">Comment</label>
+                        <textarea class="form-control" name="comment" id="comment"></textarea>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label class="form-label"></label>
+                        <button type="submit" class="btn btn-primary form-control" id="submit">Save</button>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label class="form-label"></label>
+                        <input type="reset" class="btn btn-danger form-control" value="Reset" id="reset">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label class="form-label"></label>
+                        <a type="button" class="btn btn-secondary form-control" href="<%- url + data.module %>">Back</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

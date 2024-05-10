@@ -1,0 +1,57 @@
+.container {
+    max-width: 100%;
+}
+
+body table.dataTable th.dt-type-numeric {
+    text-align: left;
+}
+
+body table tfoot {
+    display: table-header-group;
+}
+
+body table tfoot th input {
+    width: 100%;
+    border: 1px solid #a1a1a1;
+    border-radius: 4px;
+}
+
+body table tfoot th     .action-column input {
+    width: auto;
+}
+
+.action-column {
+    display: flex;
+}
+
+.edit-record {
+    padding-left: 15px;
+}
+
+.delete-record {
+    padding-left: 15px;
+}
+
+.delete-record button {
+    border: none;
+    background-color: transparent;
+}
+
+.delete-record button svg {
+    color: red;
+}
+
+.container .row > div {
+    padding-bottom: 12px;
+}
+
+.required {
+    position: relative;
+}
+
+.required svg {
+    color: red;
+    font-size: 10px;
+    position: absolute;
+    top: 0;
+}

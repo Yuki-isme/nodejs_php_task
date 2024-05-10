@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/lib/alertify/css/alertify.min.css">
+    <link rel="stylesheet" href="/lib/alertify/css/themes/default.min.css">
+    <link rel="stylesheet" href="/lib/datatable/dataTables.min.css">
+    <link rel="stylesheet" href="/lib/jquery-ui/jquery-ui.min.css">
+<!--     <link rel="stylesheet" href="/lib/mdb/css/mdb.min.css"> -->
+<!--     <link rel="stylesheet" href="/lib/jquery-nice-select/css/nice-select.css"> -->
+    <link rel="stylesheet" href="/lib/jQuery-Plugin-For-Multiple-Select-With-Checkboxes-multi-select-js/src/example-styles.css">
+    <link rel="stylesheet" href="/lib/calendar-date-time-picker/css/mobiscroll.jquery.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title><%- title %></title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row" style=" margin-top: 20px;">
+            <%- include(view) %>
+        </div>
+    </div>
+
+    <script src="/lib/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="/lib/fontawesome/js/all.js"></script>
+    <script src="/lib/jquery/jquery-3.7.1.js"></script>
+    <script src="/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="/lib/alertify/alertify.min.js"></script>
+    <script src="/lib/datatable/dataTables.min.js"></script>
+    <script src="/lib/jquery-ui/jquery-ui.min.js"></script>
+<!--     <script src="/lib/mdb/js/mdb.umd.min.js"></script> -->
+<!--     <script src="/lib/jquery-nice-select/js/jquery.nice-select.min.js"></script> -->
+    <script src="/lib/jQuery-Plugin-For-Multiple-Select-With-Checkboxes-multi-select-js/src/jquery.multi-select.min.js"></script>
+    <script src="/lib/calendar-date-time-picker/js/mobiscroll.jquery.min.js"></script>
+    <script src="/js/script.js"></script>
+    <script>dateTime.__init(<%- JSON.stringify(data.dateFormat) %>, <%- JSON.stringify(data.timeFormat) %>)</script>
+    <% if (view === 'page.listing.ejs') { %>
+        <script>listJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
+    <% } else { %>
+        <script>formJs.__init('<%- url %>')</script>
+    <% } %>
+</body>
+
+</html>

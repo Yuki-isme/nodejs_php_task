@@ -123,7 +123,7 @@ const listJs = {
                 //show hide column
                 let countHiddenColumn = data.columns.filter(column => column.hidden === true && column.onlyQuery === false).length;
                 let select = $(`#${data.module}_select`);
-                select.find('#select').multiSelect();
+                select.find('select').multiSelect({'noneText':'Column'});
                 select.find('.multi-select-menuitems').find('.multi-select-menuitem input').on('change', function() {
                     let value = $(this).val();
                     if (value === 'select_all') {
@@ -274,6 +274,9 @@ const formJs = {
     },
 
     validate: () => {
+        // var filteredArray = arrayObjects.map(function(obj) {
+        //     return { id: obj.id, validate: obj.validate };
+        // });
         console.log(1);
     },
 }

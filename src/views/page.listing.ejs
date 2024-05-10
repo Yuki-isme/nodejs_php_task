@@ -47,7 +47,7 @@
             <div class="card-body">
                 <div class="flex justify-between">
                     <div id="<%- data.module %>_select">
-                        <select id="select" multiple>
+                        <select multiple>
                             <option value="select_all">All</option>
                             <% data.columns.forEach((column, index) => { %>
                                 <% if (column.onlyQuery === false && column.hidden === true) { %>

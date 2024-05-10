@@ -120,7 +120,7 @@ const Model = {
         return select;
     },
 
-    buildQueryGetRecords: async (req, model) => {
+    buildQueryGetRecords: async (req, model, type) => {
         let select = ``;
         let from = `\r\nFROM ${model.table}`;
         let where = ``;
@@ -132,7 +132,9 @@ const Model = {
         let dateFormat = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat)?.db;
         let timeFormat = DateTime.timeFormats.find(format => format.format === DateTime.timeFormat)?.db;
 
-        req.session.module[model.module].listing.search = req.body.search.value;
+        if (type === 'listing') {
+            req.session.module[model.module].listing.search = req.body.search.value;
+        }
 
         await model.fieldDefs.forEach((field) => {
             if (select) {
@@ -145,7 +147,7 @@ const Model = {
             } else if (field.field === 'action') {
                 select += `${Model.generateActionHTML(req, model)} AS action`;
             } else {
-                console.log(`\r\n${Model.generateFieldHTML(req, model, field)}`);
+                // console.log(`\r\n${Model.generateFieldHTML(req, model, field)}`);
                 select += Model.generateFieldHTML(req, model, field);
                 if (field.relation === false) {
                     if (typeof req.body.columns !== 'undefined') {
@@ -157,7 +159,9 @@ const Model = {
                                 where += `${req.body.columns[field.index].data} LIKE '%${req.body.columns[field.index].search.value}%'`;
                             }
                         }
-                        req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
+                        if (type === 'listing') {
+                            req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
+                        }
                     }
                     if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
                         search += search === `` ? search : ` OR `;
@@ -174,7 +178,9 @@ const Model = {
                             where += where === `` ? `\r\nWHERE ` : ` AND `;
                             where += `${field.relation.table}.${field.relation.field} LIKE '%${req.body.columns[field.index].search.value}%'`;
                         }
-                        req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
+                        if (type === 'listing') {
+                            req.session.module[model.module].listing.filter[field.index] = req.body.columns[field.index].search.value;
+                        }
                     }
                     if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
                         search += search === `` ? search : ` OR `;
@@ -194,13 +200,13 @@ const Model = {
         req.session.module[model.module].listing.query.from = from;
         req.session.module[model.module].listing.query.where = where === `` ? '\r\nWHERE 1=1' : where;
 
-        console.log(query);
+        // console.log(query);
         // console.log();
         return [query, queryCount];
     },
 
     getRecords: async (req, res, model) => {
-        const [query, queryCount] = await Model.buildQueryGetRecords(req, model);
+        const [query, queryCount] = await Model.buildQueryGetRecords(req, model, 'listing');
         const [results] = await pool.query(query);
         const [amount] = await pool.query(queryCount);
         let checkedAll = typeof req.session.module[model.module].listing.selected !== 'undefined' && amount[0]['COUNT(*)'] === req.session.module[model.module].listing.selected.length;

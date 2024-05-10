@@ -16,7 +16,7 @@ body table tfoot th input {
     border-radius: 4px;
 }
 
-body table tfoot th     .action-column input {
+body table tfoot th .action-column input {
     width: auto;
 }
 

@@ -14,7 +14,7 @@ billRouter.get('/edit/:id', BillController.edit);
 billRouter.post('/update/:id', BillController.update);
 billRouter.delete('/ajax/delete/:id', BillController.delete);
 billRouter.post('/ajax/select/:id', BillController.selectItem);
-billRouter.post('/ajax/archive', BillController.archive);
+billRouter.post('/ajax/archiveConversion', BillController.archiveConversion);
 router.use('/bill', billRouter);
 
 const archiveRouter = express.Router();
@@ -26,6 +26,7 @@ archiveRouter.get('/edit/:id', ArchiveController.edit);
 archiveRouter.post('/update/:id', ArchiveController.update);
 archiveRouter.delete('/ajax/delete/:id', ArchiveController.delete);
 archiveRouter.post('/ajax/select/:id', ArchiveController.selectItem);
+archiveRouter.post('/ajax/archiveConversion', ArchiveController.archiveConversion);
 router.use('/archive', archiveRouter);
 
 // router.use(function(req, res, next) {

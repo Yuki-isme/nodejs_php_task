@@ -13,7 +13,7 @@
                     </a>
                 </div>
                 <div class="button-action">
-                    <button class="btn btn-outline-success" onclick="listJs.archive()">
+                    <button class="btn btn-outline-success" id="<%- data.module %>_archive" onclick="listJs.archiveConversion()" disabled>
                         Archive
                     </button>
                 </div>
@@ -23,6 +23,11 @@
                     </a>
                 </div>
             <% } else { %>
+                <div class="button-action">
+                    <button class="btn btn-outline-success" id="<%- data.module %>_archive" onclick="listJs.archiveConversion()" disabled>
+                        UnArchive
+                    </button>
+                </div>
                  <div class="button-action">
                     <a href="<%- url %>bill" class="btn btn-outline-success">
                         View Bill Items

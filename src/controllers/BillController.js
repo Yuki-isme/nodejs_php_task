@@ -40,8 +40,8 @@ const BillController =  {
         await Controller.selectItem(req, res, Bill);
     },
 
-    archive: async (req, res) => {
-        await Bill.archive(req, res);
+    archiveConversion: async (req, res) => {
+        await Bill.archiveConversion(req, res);
     }
 }
 

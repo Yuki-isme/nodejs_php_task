@@ -88,6 +88,7 @@ const listJs = {
                     let responseText = JSON.parse(response.responseText);
                     $(listJs.tableId).find(`#${data.module}_check_all`).prop('checked', responseText.checkedAll);
                     $(`#${data.module}_delete`).prop('disabled', !responseText.selected);
+                    $(`#${data.module}_archive`).prop('disabled', !responseText.selected);
                 }
             },
             initComplete: function () {
@@ -182,6 +183,7 @@ const listJs = {
                 },
                 success: function (response) {
                     $(`#${listJs.module}_delete`).prop('disabled', !response.selected);
+                    $(`#${listJs.module}_archive`).prop('disabled', !response.selected);
                     $(`#${listJs.module}_check_all`).prop('checked', response.selected === oTable.page.info().recordsTotal);
                 },
             });
@@ -224,9 +226,9 @@ const listJs = {
         });
     },
 
-    archive: async () => {
+    archiveConversion: async () => {
         await $.ajax({
-            url: `${listJs.url}${listJs.module}/ajax/archive`,
+            url: `${listJs.url}${listJs.module}/ajax/archiveConversion`,
             method: 'POST',
             dataType: "JSON",
             success: function (response) {

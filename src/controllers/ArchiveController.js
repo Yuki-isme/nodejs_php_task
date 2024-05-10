@@ -39,6 +39,10 @@ const ArchiveController =  {
     selectItem: async (req, res) => {
         await Controller.selectItem(req, res, Archive);
     },
+
+    archiveConversion: async (req, res) => {
+        await Archive.archiveConversion(req, res);
+    }
 }
 
 module.exports = ArchiveController;

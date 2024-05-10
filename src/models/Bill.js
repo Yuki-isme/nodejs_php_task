@@ -27,8 +27,8 @@ const Bill = {
         return await Model.getRecord(req, res, Bill);
     },
 
-    archive: async (req, res) => {
-        await Model.archive(req, res, Bill, 'archives');
+    archiveConversion: async (req, res) => {
+        await Model.archiveConversion(req, res, Bill, 'Archive');
     },
 }
 

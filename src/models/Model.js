@@ -46,7 +46,7 @@ const Model = {
         concatList.push(`${model.table}.id`);
         concatList.push(`'"'`);
         if (typeof req.session.module[model.module].listing.selected !== 'undefined' && req.session.module[model.module].listing.selected.length > 0) {
-            concatList.push(`CASE WHEN bills.id IN (${req.session.module[model.module].listing.selected.map(item => `'${item}'`).join(',')}) THEN ' checked' ELSE '' END`);
+            concatList.push(`CASE WHEN ${model.table}.id IN (${req.session.module[model.module].listing.selected.map(item => `'${item}'`).join(',')}) THEN ' checked' ELSE '' END`);
         }
         concatList.push(`'>'`);
 
@@ -294,24 +294,29 @@ const Model = {
         return results;
     },
 
-    archive: async (req, res, model, toTable) => {
-        let ids = req.session.module[model.module].listing.selected.map(item => `'${item}'`).join(',');
-        let columns = ``;
-        await model.fieldDefs.forEach((field) => {
-            if (field.insert === true) {
-                columns += columns === `` ? `${field.field}` : `, ${field.field}`;
-            }
-        });
+    archiveConversion: async (req, res, model, modelName) => {
+        let status = false;
+        if (req.session.module[model.module].listing.selected.length) {
+            const toModel = require(`../models/${modelName}`);
+            let ids = req.session.module[model.module].listing.selected.map(item => `'${item}'`).join(',');
+            let columns = ``;
+            await toModel.fieldDefs.forEach((field) => {
+                if (field.insert === true) {
+                    columns += columns === `` ? `${field.field}` : `, ${field.field}`;
+                }
+            });
 
-        let queryArchive = `INSERT INTO ${toTable} (${columns}) \r\nSELECT ${columns} \r\nFROM ${model.table} \r\nWHERE id IN (${ids})`;
-        let queryDelete = `DELETE \r\nFROM ${model.table} \r\nWHERE id IN (${ids})`
+            let queryArchive = `INSERT INTO ${toModel.table} (${columns}) \r\nSELECT ${columns} \r\nFROM ${model.table} \r\nWHERE id IN (${ids})`;
+            let queryDelete = `DELETE \r\nFROM ${model.table} \r\nWHERE id IN (${ids})`
 
-        await pool.query(queryArchive);
-        await pool.query(queryDelete);
+            await pool.query(queryArchive);
+            await pool.query(queryDelete);
 
-        req.session.module[model.module].listing.selected = [];
+            req.session.module[model.module].listing.selected = [];
+            status = true;
+        }
 
-        res.json({status: true});
+        res.json({status: status});
     },
 }
 

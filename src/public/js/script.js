@@ -57,7 +57,7 @@ const listJs = {
             searching: true,
             sort: true,
             order: [[7, "desc"]],
-            pageLength: 10,
+            pageLength: 5,
             columnDefs: columnDefs,
             displayStart: 0,
             columns: columns,
@@ -65,7 +65,8 @@ const listJs = {
             search: {
                 search: typeof data.search === 'string' ? data.search : '',
             },
-            dom: '<"dt-search-length"fl>t<"dt-info-pagination"ip>',
+            lengthMenu: [3, 5, 10, 25, 50, 75, 100],
+            dom: '<"dt-layout-row ui-helper-clearfix"<"dt-layout-cell dt-start"f><"dt-layout-cell dt-end"l>>t<"dt-layout-row ui-helper-clearfix"<"dt-layout-cell dt-start"i><"dt-layout-cell dt-end"p>>',
             language: {
                 search: '_INPUT_',
                 searchPlaceholder: 'Search records',

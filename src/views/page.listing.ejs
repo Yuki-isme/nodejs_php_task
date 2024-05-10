@@ -1,35 +1,36 @@
 <div class="col-12">
     <div class="card">
-        <div class="card-header">
-            <h2 class="card-title float-start">List <%- data.module %></h2>
+        <div class="card-header flex flex-wrap justify-end">
+            <h2 class="card-title w-full">List <%- data.module %></h2>
 
             <div class="clearfix"></div>
 
             <% if(data.module == 'bill') { %>
-                <div class="float-end" style="margin-left: 10px">
-                    <a href="<%- url %>archive" class="btn btn-outline-success">
-                        View Archived Items
-                    </a>
-                </div>
-                <div class="float-end" style="margin-left: 10px">
+
+                <div class="button-action">
                     <a href="<%- url %>bill/create" class="btn btn-outline-success">
                         Add New Bill
                     </a>
                 </div>
-                <div class="float-end" style="margin-left: 10px">
+                <div class="button-action">
                     <button class="btn btn-outline-success" onclick="listJs.archive()">
                         Archive
                     </button>
                 </div>
+                <div class="button-action">
+                    <a href="<%- url %>archive" class="btn btn-outline-success">
+                        View Archived Items
+                    </a>
+                </div>
             <% } else { %>
-                 <div class="float-end" style="margin-left: 10px">
+                 <div class="button-action">
                     <a href="<%- url %>bill" class="btn btn-outline-success">
                         View Bill Items
                     </a>
                 </div>
             <% } %>
 
-            <div class="float-end">
+            <div class="button-action">
                 <a class="btn btn-outline-danger" href="/auth/logout">
                     Logout
                 </a>
@@ -39,20 +40,22 @@
         </div>
         <div>
             <div class="card-body">
-                <div id="<%- data.module %>_select">
-                    <select id="select" multiple>
-                        <option value="select_all">All</option>
-                        <% data.columns.forEach((column, index) => { %>
-                            <% if (column.onlyQuery === false && column.hidden === true) { %>
-                                <option id="visible_<%- column.field %>" value="<%- btoa(JSON.stringify(column)) %>"><%- column.label %></option>
-                            <% } %>
-                        <% }); %>
-                    </select>
-                </div>
-                <div class="float-end">
-                    <button class="btn btn-outline-danger" id="<%- data.module %>_delete" data-value="<%- data.module %>_delete" disabled>
-                        Delete
-                    </button>
+                <div class="flex justify-between">
+                    <div id="<%- data.module %>_select">
+                        <select id="select" multiple>
+                            <option value="select_all">All</option>
+                            <% data.columns.forEach((column, index) => { %>
+                                <% if (column.onlyQuery === false && column.hidden === true) { %>
+                                    <option id="visible_<%- column.field %>" value="<%- btoa(JSON.stringify(column)) %>"><%- column.label %></option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="button-action">
+                        <button class="btn btn-outline-danger" id="<%- data.module %>_delete" data-value="<%- data.module %>_delete" disabled>
+                            Delete
+                        </button>
+                    </div>
                 </div>
                 <table class="table table-hover table-bordered" id="<%- data.module %>_tbl" style="width:100%">
                     <thead></thead>

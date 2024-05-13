@@ -43,7 +43,7 @@
     <% if (view === 'page.listing.ejs') { %>
         <script>listJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
     <% } else { %>
-        <script>formJs.__init('<%- url %>')</script>
+        <script>formJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
     <% } %>
 </body>
 

@@ -9,8 +9,8 @@ const Service = {
     module_name: 'Service',
     table: 'services',
 
-    __init: () => {
-        [Service.fieldDefs] = Model.__init(Service, true, false);
+    __init: async () => {
+        [Service.fieldDefs] = await Model.__init(Service, true, false);
     },
 
     getFullRecords: async (req, res) => {

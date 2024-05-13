@@ -16,11 +16,14 @@ const pool =  mysql.createPool({
 // (async () => {
 //     try {
 //         const connection = await pool.getConnection();
-//         await connection.query('SET time_zone = ?', [`${process.env.TIME_ZONE}`]);
+//         const [rows, fields] = await connection.query('SELECT @@global.time_zone AS timezone');
 //         connection.release();
+//         console.log('Timezone:', rows[0].timezone);
+//         console.log('Local Timezone:', `${new Date().getTimezoneOffset() ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset())/60 < 10 ? `0${Math.abs(new Date().getTimezoneOffset())/60}` : Math.abs(new Date().getTimezoneOffset())/60}:00`);
+//
 //     } catch (error) {
 //         console.error('Error:', error);
 //     }
 // })();
 
-module.exports = pool;
+global.pool = pool;

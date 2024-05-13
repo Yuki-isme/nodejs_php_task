@@ -9,8 +9,8 @@ const Category = {
     module_name: 'Category',
     table: 'categories',
 
-    __init: () => {
-        [Category.fieldDefs] = Model.__init(Category, true, false);
+    __init: async () => {
+        [Category.fieldDefs] = await Model.__init(Category, true, false);
     },
 
     getFullRecords: async (req, res) => {

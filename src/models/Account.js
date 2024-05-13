@@ -9,8 +9,8 @@ const Account = {
     module_name: 'Account',
     table: 'accounts',
 
-    __init: () => {
-        [Account.fieldDefs] = Model.__init(Account, true, false);
+    __init: async () => {
+        [Account.fieldDefs] = await Model.__init(Account, true, false);
     },
 
     getFullRecords: async (req, res) => {

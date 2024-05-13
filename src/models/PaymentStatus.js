@@ -9,8 +9,8 @@ const PaymentStatus = {
     module_name: 'Payment Status',
     table: 'payment_statuses',
 
-    __init: () => {
-        [PaymentStatus.fieldDefs] = Model.__init(PaymentStatus, true, false);
+    __init: async () => {
+        [PaymentStatus.fieldDefs] = await Model.__init(PaymentStatus, true, false);
     },
 
     getFullRecords: async (req, res) => {

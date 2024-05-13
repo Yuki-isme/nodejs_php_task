@@ -1,4 +1,3 @@
-const DateTime = require("../services/DateTime");
 const Model = require("../models/Model");
 const Account = require('../models/Account');
 Account.__init();
@@ -12,15 +11,20 @@ PaymentStatus.__init();
 
 const Controller = {
     render: async (req, res, view, title, data) => {
-        await res.render('layout', {view: view, title: title, url: `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`, data: Object.assign({dateFormat: DateTime.dateFormat, timeFormat: DateTime.timeFormat}, data)});
+        console.log(DateTime.localTimeZone);
+        await res.render('layout', {view: view, title: title, url: `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`, data: Object.assign({dateFormat: global.DateTime.dateFormat, timeFormat: global.DateTime.timeFormat}, data)});
     },
 
     listingPage: async (req, res, model) => {
-        await Controller.render(req, res, 'page.listing.ejs', model.module_name, {columns: model.fieldDefs, module: model.module, filter: req.session.module[model.module].listing.filter, search: req.session.module[model.module].listing.search});
+        let listingProperties = ['index', 'field', 'label', 'display', 'hidden', 'orderable', 'relation'];
+        let fieldDefsFiltered = model.fieldDefs.map(item => Object.fromEntries(Object.entries(item).filter(([key, value]) => listingProperties.includes(key))));
+        await Controller.render(req, res, 'page.listing.ejs', model.module_name, {columns: fieldDefsFiltered, module: model.module, filter: req.session.module[model.module].listing.filter, search: req.session.module[model.module].listing.search});
     },
 
-    formPage: async (req, res, title, data) => {
-        await Controller.render(req, res, 'page.form.ejs', title, data);
+    formPage: async (req, res, model, title, data) => {
+        let formProperties = ['field', 'label', 'validate', 'onlySelect', 'relation'];
+        let fieldDefsFiltered = model.fieldDefs.map(item => Object.fromEntries(Object.entries(item).filter(([key, value]) => formProperties.includes(key))));
+        await Controller.render(req, res, 'page.form.ejs', title, Object.assign(data, {fields: fieldDefsFiltered}));
     },
 
     formData: async (req, res) => {

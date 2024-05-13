@@ -30,7 +30,7 @@ const listJs = {
             {"targets": [], "visible": false}
         ];
         data.columns.forEach((column) => {
-            if (column.onlyQuery === false) {
+            if (column.display) {
                 if (column.relation === false) {
                     columns.push({'data': column.field, title: column.label});
                 } else {
@@ -121,7 +121,7 @@ const listJs = {
                 });
 
                 //show hide column
-                let countHiddenColumn = data.columns.filter(column => column.hidden === true && column.onlyQuery === false).length;
+                let countHiddenColumn = data.columns.filter(column => column.hidden === true && column.display).length;
                 let select = $(`#${data.module}_select`);
                 select.find('select').multiSelect({'noneText':'Column'});
                 select.find('.multi-select-menuitems').find('.multi-select-menuitem input').on('change', function() {
@@ -253,10 +253,12 @@ const listJs = {
 
 const formJs = {
     url: '',
+    module: '',
     form: '',
-    __init: (url) => {
+    __init: (url, data) => {
         $(document).ready( () => {
             formJs.url = url;
+            listJs.module = data.module;
             formJs.form = $('#form');
             // $('#closed_date').datepicker({dateFormat: 'dd/mm/yy'});
             $('#closed_date').mobiscroll().datepicker({
@@ -266,17 +268,65 @@ const formJs = {
                 dateFormat: dateTime.dateFormat,
                 timeFormat: dateTime.timeFormat,
             });
-            // formJs.form.on('submit', (event) => {
-            //     event.preventDefault();
-            //     formJs.validate();
-            // });
+            formJs.validate(data.fields);
         });
     },
 
-    validate: () => {
-        // var filteredArray = arrayObjects.map(function(obj) {
-        //     return { id: obj.id, validate: obj.validate };
-        // });
-        console.log(1);
+    validate: (fields) => {
+        let patternRules = [];
+        let uniqueRules = [];
+        fields.forEach((field) => {
+            if (field.validate) {
+                field.validate.rules.forEach(rule => {
+                    if (rule.rule === 'pattern') {
+                        patternRules.push({ ruleName: field.field + '_pattern', pattern: rule.value, message: rule.message });
+                    }
+                });
+            }
+        });
+
+        patternRules.forEach(rule => {
+            $.validator.addMethod(rule.ruleName, function(value, element) {
+                return this.optional(element) || new RegExp(rule.pattern).test(value);
+            }, rule.message);
+        });
+
+        console.log(patternRules);
+
+        let rules = {};
+        let messages = {};
+
+        fields.forEach(field => {
+            let fieldRules = {};
+            let fieldMessages = {};
+
+            if (field.validate) {
+                field.validate.rules.forEach(rule => {
+                    if (rule.rule === 'pattern') {
+                        fieldRules[field.field + '_pattern'] = true;
+                    } else if (rule.rule === 'unique') {
+                        fieldRules['remote'] = {
+                            url: `${formJs.url}${listJs.module}/ajax/checkExists`,
+                            type: "POST",
+                            data: {
+                                field: field.field,
+                                tables: rule.tables,
+                            }
+                        };
+                        fieldMessages['remote'] = rule.message;
+                    } else {
+                        fieldRules[rule.rule] = rule.value;
+                        fieldMessages[rule.rule] = rule.message;
+                    }
+                });
+                rules[field.field] = fieldRules;
+                messages[field.field] = fieldMessages;
+            }
+        });
+
+        formJs.form.validate({
+            rules: rules,
+            messages: messages
+        });
     },
 }

@@ -50,7 +50,7 @@
                         <select multiple>
                             <option value="select_all">All</option>
                             <% data.columns.forEach((column, index) => { %>
-                                <% if (column.onlyQuery === false && column.hidden === true) { %>
+                                <% if (column.display && column.hidden === true) { %>
                                     <option id="visible_<%- column.field %>" value="<%- btoa(JSON.stringify(column)) %>"><%- column.label %></option>
                                 <% } %>
                             <% }); %>
@@ -67,7 +67,7 @@
                     <tfoot>
                         <tr>
                             <% data.columns.forEach((column, index) => { %>
-                                <% if (column.onlyQuery === false) { %>
+                                <% if (column.display) { %>
                                     <th><%- column.label %></th>
                                 <% } %>
                             <% }); %>

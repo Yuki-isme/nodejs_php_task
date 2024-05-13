@@ -15,6 +15,7 @@ billRouter.post('/update/:id', BillController.update);
 billRouter.delete('/ajax/delete/:id', BillController.delete);
 billRouter.post('/ajax/select/:id', BillController.selectItem);
 billRouter.post('/ajax/archiveConversion', BillController.archiveConversion);
+billRouter.post('/ajax/checkExists', BillController.checkExists);
 router.use('/bill', billRouter);
 
 const archiveRouter = express.Router();

@@ -1,38 +1,35 @@
-const pool = require('../config/database');
-const DateTime = require("../services/DateTime");
-const Bill = require("./Bill");
-
 const Model = {
     defaultFieldDef: [
-        {field: 'id', label: 'ID', type: 'int', validate: null, hidden: true, orderable: true, onlyQuery: true, insert: false, relation: false}
+        {field: 'id', label: 'ID', type: 'int', validate: null, display: false, hidden: true, orderable: false, onlySelect: true, insert: false, relation: false}
     ],
 
     actionFieldDef: [
-        {field: 'action', label: 'Action', type: 'action', validate: null, hidden: false, orderable: false, onlyQuery: false, insert: false, relation: false}
+        {field: 'action', label: 'Action', type: 'action', validate: null, display: true, hidden: false, orderable: false, onlySelect: false, insert: false, relation: false}
     ],
 
-    __init(model, defaultFieldDef = true, actionFieldDef = true) {
+    __init: async (model, defaultFieldDef = true, actionFieldDef = true) => {
         if (actionFieldDef) {
-            model.fieldDefs.unshift(...Model.actionFieldDef);
+            await model.fieldDefs.unshift(...Model.actionFieldDef);
         }
         if (defaultFieldDef) {
-            model.fieldDefs.unshift(...Model.defaultFieldDef);
+            await model.fieldDefs.unshift(...Model.defaultFieldDef);
         }
-        model.fieldDefs = Model.setIndex(model.fieldDefs);
+
+        model.fieldDefs = await Model.setIndex(model.fieldDefs);
 
         return [model.fieldDefs];
     },
 
-    setIndex: (fieldDefs) => {
+    setIndex: async (fieldDefs) => {
         let fieldIndex = 0;
-        fieldDefs.forEach((field) => {
-            if (field.onlyQuery) {
-                field.index = null;
+        await fieldDefs.forEach((field) => {
+            if (field.display) {
+                field.index = fieldIndex++;
             } else {
-                field.index = fieldIndex;
-                fieldIndex++;
+                field.index = null;
             }
         });
+
         return fieldDefs;
     },
 
@@ -83,7 +80,7 @@ const Model = {
 
             if (field.relation === false) {
                 if (field.type === 'datetime') {
-                    customSelect = `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}')`;
+                    customSelect = `${DateTime.dbConvertFormatAndTz(field.field)}`;
                 } else {
                     customSelect = `${field.field}`;
                 }
@@ -108,7 +105,7 @@ const Model = {
         } else {
             if (field.relation === false) {
                 if (field.type === 'datetime') {
-                    select = `DATE_FORMAT(${field.field}, '${dateFormat} ${timeFormat}') AS ${field.field}`;
+                    select = `${DateTime.dbConvertFormatAndTz(field.field)} AS ${field.field}`;
                 } else {
                     select = `${field.field}`;
                 }
@@ -129,9 +126,6 @@ const Model = {
         let limit = typeof req.body.length === 'undefined' ? `` : `\r\nLIMIT ${req.body.length}`;
         let offset = typeof req.body.start === 'undefined' ? `` : `\r\nOFFSET ${req.body.start}`;
 
-        let dateFormat = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat)?.db;
-        let timeFormat = DateTime.timeFormats.find(format => format.format === DateTime.timeFormat)?.db;
-
         if (type === 'listing') {
             req.session.module[model.module].listing.search = req.body.search.value;
         }
@@ -142,7 +136,7 @@ const Model = {
             } else {
                 select += `SELECT `;
             }
-            if (field.onlyQuery) {
+            if (field.onlySelect) {
                 select += `${model.table}.${field.field}`;
             } else if (field.field === 'action') {
                 select += `${Model.generateActionHTML(req, model)} AS action`;
@@ -154,7 +148,7 @@ const Model = {
                         if (req.body.columns[field.index].search.value !== ``) {
                             where += where === `` ? `\r\nWHERE ` : ` AND `;
                             if (field.type === 'datetime') {
-                                where += `DATE_FORMAT(${req.body.columns[field.index].data}, '${dateFormat} ${timeFormat}') LIKE '%${req.body.columns[field.index].search.value}%'`;
+                                where += `${DateTime.dbConvertFormatAndTz(req.body.columns[field.index].data)} LIKE '%${req.body.columns[field.index].search.value}%'`;
                             } else {
                                 where += `${req.body.columns[field.index].data} LIKE '%${req.body.columns[field.index].search.value}%'`;
                             }
@@ -166,7 +160,7 @@ const Model = {
                     if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
                         search += search === `` ? search : ` OR `;
                         if (field.type === 'datetime') {
-                            search += `DATE_FORMAT(${req.body.columns[field.index].data}, '${dateFormat} ${timeFormat}') LIKE '%${req.body.search.value}%'`;
+                            search += `${DateTime.dbConvertFormatAndTz(req.body.columns[field.index].data)} LIKE '%${req.body.search.value}%'`;
                         } else {
                             search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
                         }
@@ -317,6 +311,30 @@ const Model = {
         }
 
         res.json({status: status});
+    },
+
+    checkExists: async (req, res) => {
+        let tables = req.body.tables;
+        let field = req.body.field;
+        let value = req.body[field];
+
+        let existsString = ``;
+        tables.forEach((table) => {
+            existsString += existsString === `` ? `WHEN EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}')` : ` OR EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}')`;
+        });
+
+        let query = `SELECT 
+                                CASE 
+                                    ${existsString}
+                                    THEN true
+                                    ELSE false
+                                END AS existence_check
+                            `;
+
+
+        [results] = await pool.query(query);
+
+        res.json(results[0].existence_check === 0);
     },
 }
 

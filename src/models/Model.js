@@ -80,7 +80,7 @@ const Model = {
 
             if (field.relation === false) {
                 if (field.type === 'datetime') {
-                    customSelect = `${DateTime.dbConvertFormatAndTz(field.field)}`;
+                    customSelect = `${DateTime.queryConvertFromDb(field.field)}`;
                 } else {
                     customSelect = `${field.field}`;
                 }
@@ -105,7 +105,7 @@ const Model = {
         } else {
             if (field.relation === false) {
                 if (field.type === 'datetime') {
-                    select = `${DateTime.dbConvertFormatAndTz(field.field)} AS ${field.field}`;
+                    select = `${DateTime.queryConvertFromDb(field.field)} AS ${field.field}`;
                 } else {
                     select = `${field.field}`;
                 }
@@ -148,7 +148,7 @@ const Model = {
                         if (req.body.columns[field.index].search.value !== ``) {
                             where += where === `` ? `\r\nWHERE ` : ` AND `;
                             if (field.type === 'datetime') {
-                                where += `${DateTime.dbConvertFormatAndTz(req.body.columns[field.index].data)} LIKE '%${req.body.columns[field.index].search.value}%'`;
+                                where += `${DateTime.queryConvertFromDb(req.body.columns[field.index].data)} LIKE '%${req.body.columns[field.index].search.value}%'`;
                             } else {
                                 where += `${req.body.columns[field.index].data} LIKE '%${req.body.columns[field.index].search.value}%'`;
                             }
@@ -160,7 +160,7 @@ const Model = {
                     if (typeof req.body.search !== 'undefined' && req.body.search.value !== ``) {
                         search += search === `` ? search : ` OR `;
                         if (field.type === 'datetime') {
-                            search += `${DateTime.dbConvertFormatAndTz(req.body.columns[field.index].data)} LIKE '%${req.body.search.value}%'`;
+                            search += `${DateTime.queryConvertFromDb(req.body.columns[field.index].data)} LIKE '%${req.body.search.value}%'`;
                         } else {
                             search += `${req.body.columns[field.index].data} LIKE '%${req.body.search.value}%'`;
                         }

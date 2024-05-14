@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('./src/config/database');
 require('./src/services/DateTime');
+require('./src/services/Common');
 
 //init app
 const express = require('express');

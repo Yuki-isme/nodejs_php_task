@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 const DateTime = {
-    localTimeZone: new Date().getTimezoneOffset(),
-    localTimeZoneUtc: `${this.localTimeZone > 0 ? '-' : '+'}${Math.abs(this.localTimeZone)/60 < 10 ? `0${Math.abs(this.localTimeZone)/60}` : Math.abs(this.localTimeZone)/60}:00`,
+    localTimeZone: null,
+    localTimeZoneUtc: null,
 
     dateTimeFormat: {
         dateFormat: null,
@@ -29,7 +29,6 @@ const DateTime = {
     __init: async () => {
         DateTime.localTimeZone = new Date().getTimezoneOffset();
         DateTime.localTimeZoneUtc = await DateTime.formatTimeZone(DateTime.localTimeZone);
-        console.log(DateTime.localTimeZoneUtc);
         DateTime.dateTimeFormat.dateFormat = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat);
         DateTime.dateTimeFormat.timeFormat = DateTime.timeFormats.find(format => format.format === DateTime.timeFormat);
         DateTime.dateFormatProperty = DateTime.dateFormats.find(format => format.format === DateTime.dateFormat);
@@ -43,6 +42,14 @@ const DateTime = {
         const formattedHours = hours < 10 ? `0${hours}` : hours;
         const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
         return `${sign}${formattedHours}:${formattedMinutes}`;
+    },
+
+    getDateFormat: () => {
+        return DateTime.dateFormats.find(format => format.format === DateTime.dateFormat);
+    },
+
+    getTimeFormat: () => {
+        return DateTime.timeFormats.find(format => format.format === DateTime.timeFormat);
     },
 
     initDate: (inputDateTime) => {
@@ -83,7 +90,7 @@ const DateTime = {
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
     },
 
-    dbConvertFormatAndTz: (field) => {
+    queryConvertFromDb: (field) => {
         return `DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${DateTime.localTimeZoneUtc}'), '${DateTime.dateFormatProperty.db} ${DateTime.timeFormatProperty.db}')`;
     },
 
@@ -92,6 +99,9 @@ const DateTime = {
     },
 }
 
-DateTime.__init();
-
 global.DateTime = DateTime;
+
+(async () => {
+    await global.DateTime.__init();
+    // console.log(global.DateTime.dateTimeFormat);
+})();

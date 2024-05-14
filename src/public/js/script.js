@@ -4,7 +4,39 @@ const dateTime = {
     __init: (dateFormat, timeFormat) => {
         dateTime.dateFormat = dateFormat;
         dateTime.timeFormat = timeFormat;
-    }
+    },
+
+    initDate: (inputDateTime) => {
+        let dateTimes = inputDateTime.split(' ');
+        let dateParts = dateTimes[0];
+        let timeParts = dateTimes[1];
+
+        let formatPartsDate = dateTime.dateFormat.split(/[\-.\/]/);
+        dateParts = dateParts.split(/[\-.\/]/);
+
+        let yearIndex = formatPartsDate.findIndex(part => part.toLowerCase().includes('y'));
+        let monthIndex = formatPartsDate.findIndex(part => part.toLowerCase().includes('m'));
+        let dayIndex = formatPartsDate.findIndex(part => part.toLowerCase().includes('d'));
+
+        let year = parseInt(dateParts[yearIndex], 10);
+        let month = parseInt(dateParts[monthIndex], 10) - 1;
+        let day = parseInt(dateParts[dayIndex], 10);
+
+        let date = new Date(year, month, day);
+
+        if (typeof timeParts !== 'undefined') {
+            timeParts = timeParts.split(':');
+            let hour = parseInt(timeParts[0], 10);
+            let minute = parseInt(timeParts[1], 10);
+            let second = dateTime.timeFormat.includes('ss') ? parseInt(timeParts[2], 10) : 0;
+
+            hour += dateTime.timeFormat.includes('A') && dateTime[2] === 'PM' ? 12 : 0;
+
+            date.setHours(hour, minute, second);
+        }
+
+        return date;
+    },
 }
 
 const listJs = {
@@ -274,24 +306,30 @@ const formJs = {
 
     validate: (fields) => {
         let patternRules = [];
-        let uniqueRules = [];
+
         fields.forEach((field) => {
             if (field.validate) {
                 field.validate.rules.forEach(rule => {
                     if (rule.rule === 'pattern') {
-                        patternRules.push({ ruleName: field.field + '_pattern', pattern: rule.value, message: rule.message });
+                        patternRules.push({ ruleName: field.field + '_pattern', rule: rule.rule, value: rule.value, message: rule.message });
                     }
                 });
             }
         });
 
-        patternRules.forEach(rule => {
-            $.validator.addMethod(rule.ruleName, function(value, element) {
-                return this.optional(element) || new RegExp(rule.pattern).test(value);
-            }, rule.message);
+        $.validator.addMethod("greaterThanCurrentTime", function(value, element) {
+            let currentTime = new Date();
+            let inputTime = dateTime.initDate(value);
+            return this.optional(element) || inputTime > currentTime;
         });
 
-        console.log(patternRules);
+        patternRules.forEach(rule => {
+            if (rule.rule === 'pattern') {
+                $.validator.addMethod(rule.ruleName, function(value, element) {
+                    return this.optional(element) || new RegExp(rule.value).test(value);
+                }, rule.message);
+            }
+        });
 
         let rules = {};
         let messages = {};
@@ -304,8 +342,8 @@ const formJs = {
                 field.validate.rules.forEach(rule => {
                     if (rule.rule === 'pattern') {
                         fieldRules[field.field + '_pattern'] = true;
-                    } else if (rule.rule === 'unique') {
-                        fieldRules['remote'] = {
+                    } else if (rule.rule === 'remote') {
+                        fieldRules[rule.rule] = {
                             url: `${formJs.url}${listJs.module}/ajax/checkExists`,
                             type: "POST",
                             data: {
@@ -313,7 +351,7 @@ const formJs = {
                                 tables: rule.tables,
                             }
                         };
-                        fieldMessages['remote'] = rule.message;
+                        fieldMessages[rule.rule] = rule.message;
                     } else {
                         fieldRules[rule.rule] = rule.value;
                         fieldMessages[rule.rule] = rule.message;

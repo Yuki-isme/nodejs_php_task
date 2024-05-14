@@ -11,7 +11,6 @@ PaymentStatus.__init();
 
 const Controller = {
     render: async (req, res, view, title, data) => {
-        console.log(DateTime.localTimeZone);
         await res.render('layout', {view: view, title: title, url: `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`, data: Object.assign({dateFormat: global.DateTime.dateFormat, timeFormat: global.DateTime.timeFormat}, data)});
     },
 

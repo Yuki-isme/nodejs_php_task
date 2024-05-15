@@ -1,10 +1,10 @@
 const Model = {
     defaultFieldDef: [
-        {field: 'id', label: 'ID', type: 'int', validate: null, display: false, hidden: true, orderable: false, onlySelect: true, insert: false, relation: false}
+        {field: 'id', label: 'ID', type: 'int', validate: null, display: false, hidden: true, orderable: false, onlySelect: true, select: true, insert: false, relation: false}
     ],
 
     actionFieldDef: [
-        {field: 'action', label: 'Action', type: 'action', validate: null, display: true, hidden: false, orderable: false, onlySelect: false, insert: false, relation: false}
+        {field: 'action', label: 'Action', type: 'action', validate: null, display: true, hidden: false, orderable: false, onlySelect: false, select: false, insert: false, relation: false}
     ],
 
     __init: async (model, defaultFieldDef = true, actionFieldDef = true) => {
@@ -217,7 +217,7 @@ const Model = {
         let query = ``;
         let values = ``;
         for (const field of model.fieldDefs) {
-            if (typeof field.value !== 'undefined') {
+            if (typeof field.value !== 'undefined' && field.insert === true) {
                 if (field.type === 'datetime') {
                     field.value = await DateTime.convertToDb(field.value);
                 }
@@ -241,9 +241,20 @@ const Model = {
 
     getRecord: async (req, res, model) => {
         let id = req.params.id;
-        let query = `SELECT *
-                     FROM ${model.table}
-                     WHERE id = '${id}'`;
+        let select = ``;
+
+        model.fieldDefs.forEach((field) => {
+            if (field.select === true) {
+                select += select === `` ? `SELECT ` : `, `;
+                if (field.type === 'datetime') {
+                    select += `${DateTime.queryConvertFromDb(field.field)} AS ${field.field}`
+                } else {
+                    select += `${field.field}`;
+                }
+            }
+        });
+        let query = `${select}\r\nFROM ${model.table}\r\nWHERE id = '${id}'`;
+
         const [results] = await pool.query(query);
         return results;
     },
@@ -252,7 +263,7 @@ const Model = {
         let id = req.params.id;
         let query = ``;
         for (const field of model.fieldDefs) {
-            if (typeof field.value !== 'undefined') {
+            if (typeof field.value !== 'undefined' && field.insert === true) {
                 if (field.type === 'datetime') {
                     field.value = DateTime.convertToDb(field.value);
                 }
@@ -328,9 +339,7 @@ const Model = {
                                     ${existsString}
                                     THEN true
                                     ELSE false
-                                END AS existence_check
-                            `;
-
+                                END AS existence_check`;
 
         [results] = await pool.query(query);
 

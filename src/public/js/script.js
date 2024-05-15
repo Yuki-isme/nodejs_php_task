@@ -103,8 +103,8 @@ const listJs = {
                 search: '_INPUT_',
                 searchPlaceholder: 'Search records',
                 lengthMenu: "_MENU_",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                infoEmpty: "Showing 0 to 0 of 0 entries"
+                // info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                // infoEmpty: "Showing 0 to 0 of 0 entries"
                 // infoFiltered:   "(filtered from _MAX_ total entries)",
                 // paginate: {
                 //     first:      "First",

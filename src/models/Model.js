@@ -325,13 +325,16 @@ const Model = {
     },
 
     checkExists: async (req, res) => {
+        let id = req.body.id;
+        let table = req.body.table;
         let tables = req.body.tables;
         let field = req.body.field;
         let value = req.body[field];
 
-        let existsString = ``;
+        let existsString = `WHEN EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}' AND id != '${id}')`;
+
         tables.forEach((table) => {
-            existsString += existsString === `` ? `WHEN EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}')` : ` OR EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}')`;
+            existsString += ` OR EXISTS (SELECT 1 FROM ${table} WHERE ${field} = '${value}')`;
         });
 
         let query = `SELECT 
@@ -340,6 +343,8 @@ const Model = {
                                     THEN true
                                     ELSE false
                                 END AS existence_check`;
+
+        console.log(query);
 
         [results] = await pool.query(query);
 

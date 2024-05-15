@@ -11,7 +11,7 @@ billRouter.post('/ajax/getRecords', BillController.getRecords);
 billRouter.get('/create', BillController.create);
 billRouter.post('/store', BillController.store);
 billRouter.get('/edit/:id', BillController.edit);
-billRouter.post('/update/:id', BillController.update);
+billRouter.put('/update/:id', BillController.update);
 billRouter.delete('/ajax/delete/:id', BillController.delete);
 billRouter.post('/ajax/select/:id', BillController.selectItem);
 billRouter.post('/ajax/archiveConversion', BillController.archiveConversion);
@@ -24,10 +24,11 @@ archiveRouter.post('/ajax/getRecords', ArchiveController.getRecords);
 archiveRouter.get('/create', ArchiveController.create);
 archiveRouter.post('/store', ArchiveController.store);
 archiveRouter.get('/edit/:id', ArchiveController.edit);
-archiveRouter.post('/update/:id', ArchiveController.update);
+archiveRouter.put('/update/:id', ArchiveController.update);
 archiveRouter.delete('/ajax/delete/:id', ArchiveController.delete);
 archiveRouter.post('/ajax/select/:id', ArchiveController.selectItem);
 archiveRouter.post('/ajax/archiveConversion', ArchiveController.archiveConversion);
+archiveRouter.post('/ajax/checkExists', ArchiveController.checkExists);
 router.use('/archive', archiveRouter);
 
 // router.use(function(req, res, next) {

@@ -13,7 +13,7 @@ const ArchiveController =  {
 
     create: async (req, res) => {
         let formData = await Controller.formData(req, res);
-        await Controller.formPage(req, res, Archive, 'Archive Create', Object.assign({ module: 'Archive', action: 'store' }, formData));
+        await Controller.formPage(req, res, Archive, 'Archive Create', Object.assign({ module: 'Archive', action: 'store', id: null}, formData));
     },
 
     store: async (req, res) => {
@@ -24,7 +24,7 @@ const ArchiveController =  {
     edit: async (req, res) => {
         let formData = await Controller.formData(req, res);
         let archive = await Archive.getRecord(req, res);
-        await Controller.formPage(req, res, Archive, 'Archive Update', Object.assign({ module: 'Archive', action: `update/${req.params.id}`, record: archive[0] }, formData));
+        await Controller.formPage(req, res, Archive, 'Archive Update', Object.assign({ module: 'Archive', action: `update/${req.params.id}`, record: archive[0], id: req.params.id}, formData));
     },
 
     update: async (req, res) => {
@@ -42,7 +42,11 @@ const ArchiveController =  {
 
     archiveConversion: async (req, res) => {
         await Archive.archiveConversion(req, res);
-    }
+    },
+
+    checkExists: async (req, res) => {
+        await Archive.checkExists(req, res);
+    },
 }
 
 module.exports = ArchiveController;

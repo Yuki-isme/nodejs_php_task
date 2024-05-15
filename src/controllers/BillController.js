@@ -13,7 +13,7 @@ const BillController =  {
 
     create: async (req, res) => {
         let formData = await Controller.formData(req, res);
-        await Controller.formPage(req, res, Bill, 'Bill Create', Object.assign({ module: Bill.module, action: 'store' }, formData));
+        await Controller.formPage(req, res, Bill, 'Bill Create', Object.assign({ module: Bill.module, action: 'store', id: null}, formData));
     },
 
     store: async (req, res) => {
@@ -24,7 +24,7 @@ const BillController =  {
     edit: async (req, res) => {
         let formData = await Controller.formData(req, res);
         let bill = await Bill.getRecord(req, res);
-        await Controller.formPage(req, res, Bill, 'Bill Update', Object.assign({ module: Bill.module, action: `update/${req.params.id}`, record: bill[0] }, formData));
+        await Controller.formPage(req, res, Bill, 'Bill Update', Object.assign({ module: Bill.module, action: `update/${req.params.id}`, record: bill[0], id: req.params.id}, formData));
     },
 
     update: async (req, res) => {

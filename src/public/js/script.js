@@ -292,6 +292,9 @@ const formJs = {
             formJs.url = url;
             listJs.module = data.module;
             formJs.form = $('#form');
+            if (data.id) {
+                formJs.form.attr('method', 'PUT');
+            }
             // $('#closed_date').datepicker({dateFormat: 'dd/mm/yy'});
             $('#closed_date').mobiscroll().datepicker({
                 controls: ['calendar', 'time'],
@@ -300,11 +303,11 @@ const formJs = {
                 dateFormat: dateTime.dateFormat,
                 timeFormat: dateTime.timeFormat,
             });
-            formJs.validate(data.fields);
+            formJs.validate(data.id, data.fields);
         });
     },
 
-    validate: (fields) => {
+    validate: (id, fields) => {
         let patternRules = [];
 
         fields.forEach((field) => {
@@ -347,7 +350,9 @@ const formJs = {
                             url: `${formJs.url}${listJs.module}/ajax/checkExists`,
                             type: "POST",
                             data: {
+                                id: id,
                                 field: field.field,
+                                table: rule.table,
                                 tables: rule.tables,
                             }
                         };

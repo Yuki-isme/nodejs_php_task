@@ -1,5 +1,4 @@
 const Bill = require('../models/Bill');
-Bill.__init();
 const Controller = require('./Controller');
 
 const BillController =  {

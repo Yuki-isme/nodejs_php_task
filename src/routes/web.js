@@ -1,11 +1,19 @@
 const express = require('express');
+const router = express.Router();
+const authenticateToken = require('../middleware/authMiddleware');
+const AuthController = require('../controllers/AuthController');
 const BillController = require('../controllers/BillController');
 const ArchiveController = require('../controllers/ArchiveController');
-const router = express.Router();
 
-router.get('/', BillController.index);
+router.get('/login', AuthController.login);
+router.post('/auth', AuthController.auth);
+router.post('/refreshToken', AuthController.refreshToken);
+router.post('/logout', AuthController.logout);
+
+router.get('/', authenticateToken, BillController.index);
 
 const billRouter = express.Router();
+billRouter.use(authenticateToken);
 billRouter.get('/', BillController.index);
 billRouter.post('/ajax/getRecords', BillController.getRecords);
 billRouter.get('/create', BillController.create);
@@ -19,6 +27,7 @@ billRouter.post('/ajax/checkExists', BillController.checkExists);
 router.use('/bill', billRouter);
 
 const archiveRouter = express.Router();
+archiveRouter.use(authenticateToken);
 archiveRouter.get('/', ArchiveController.index);
 archiveRouter.post('/ajax/getRecords', ArchiveController.getRecords);
 archiveRouter.get('/create', ArchiveController.create);

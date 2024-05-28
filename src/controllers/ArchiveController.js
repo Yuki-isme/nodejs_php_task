@@ -1,5 +1,5 @@
 const Archive = require('../models/Archive');
-Archive.__init();
+// Archive.__init();
 const Controller = require('./Controller');
 
 const ArchiveController =  {

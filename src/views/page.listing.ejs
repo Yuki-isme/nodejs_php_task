@@ -36,9 +36,14 @@
             <% } %>
 
             <div class="button-action">
-                <a class="btn btn-outline-danger" href="/auth/logout">
-                    Logout
-                </a>
+                <form action="/refreshToken" method="post">
+                    <button class="btn btn-outline-danger" type="submit">Refresh token</button>
+                </form>
+            </div>
+            <div class="button-action">
+                <form action="/logout" method="post">
+                    <button class="btn btn-outline-danger" type="submit">Logout</button>
+                </form>
             </div>
 
             <div class="clearfix"></div>

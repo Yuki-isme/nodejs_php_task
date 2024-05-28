@@ -19,3 +19,7 @@ const Service = {
 }
 
 module.exports = Service;
+
+(async () => {
+    await Service.__init();
+})();

@@ -19,3 +19,7 @@ const Account = {
 }
 
 module.exports = Account;
+
+(async () => {
+    await Account.__init();
+})();

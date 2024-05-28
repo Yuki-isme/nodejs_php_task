@@ -7,7 +7,7 @@
                 </div>
                 <div class="col-12">
                     <div class="form-group">
-                        <label class="form-label">Account Number</label>
+                        <label class="form-label" for ="account_id">Account Number</label>
                         <select class="form-select" name="account_id" id="account_id">
                             <% data.accounts.forEach((value, index) => { %>
                                 <option value="<%- value.id %>" <%- typeof data.record !== 'undefined' && data.record.account_id === value.id ? "selected" : ""%>><%- value.name %></option>

@@ -19,3 +19,7 @@ const Category = {
 }
 
 module.exports = Category;
+
+(async () => {
+    await Category.__init();
+})();

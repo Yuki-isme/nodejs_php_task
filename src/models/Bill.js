@@ -44,3 +44,7 @@ const Bill = {
 }
 
 module.exports = Bill;
+
+(async () => {
+    await Bill.__init();
+})();

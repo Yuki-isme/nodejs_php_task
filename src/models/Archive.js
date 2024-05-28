@@ -44,3 +44,7 @@ const Archive = {
 }
 
 module.exports = Archive;
+
+(async () => {
+    await Archive.__init();
+})();

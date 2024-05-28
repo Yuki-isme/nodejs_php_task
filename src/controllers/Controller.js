@@ -1,13 +1,13 @@
 const Model = require("../models/Model");
 const Account = require('../models/Account');
-Account.__init();
+// Account.__init();
 const Service = require('../models/Service');
-Service.__init();
+// Service.__init();
 const Category = require('../models/Category');
-Category.__init();
+// Category.__init();
 const PaymentStatus = require('../models/PaymentStatus');
 const Bill = require("../models/Bill");
-PaymentStatus.__init();
+// PaymentStatus.__init();
 
 const Controller = {
     render: async (req, res, view, title, data) => {

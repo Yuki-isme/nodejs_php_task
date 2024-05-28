@@ -121,6 +121,8 @@ const listJs = {
                     $(listJs.tableId).find(`#${data.module}_check_all`).prop('checked', responseText.checkedAll);
                     $(`#${data.module}_delete`).prop('disabled', !responseText.selected);
                     $(`#${data.module}_archive`).prop('disabled', !responseText.selected);
+
+                    $('<tr role="row" class="totals-row"></tr>').appendTo($(oTable.table().body()));
                 }
             },
             initComplete: function () {

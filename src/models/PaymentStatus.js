@@ -19,3 +19,7 @@ const PaymentStatus = {
 }
 
 module.exports = PaymentStatus;
+
+(async () => {
+    await PaymentStatus.__init();
+})();

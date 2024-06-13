@@ -27,7 +27,7 @@ fs
     );
   })
   .forEach(file => {
-    if (!['Account.js', 'Archive.js', 'Bill.js', 'Category.js', 'Model.js', 'PaymentStatus.js', 'Service.js'].includes(file)) {
+    if (!['Account.js', 'Archive.js', 'Bill.js', 'Category.js', 'Model_Ignore.js','Model.js', 'PaymentStatus.js', 'Service.js'].includes(file)) {
       const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
       db[model.name] = model;
     }

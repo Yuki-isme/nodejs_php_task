@@ -25,11 +25,69 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.fieldDef = {
-    username: {label: 'Username', type: 'string',  display: true,  hidden: false, orderable: true, listing: true, select: true, insert: true, quick_edit: true, relation: false, validate: false},
-    email:    {label: 'Email',    type: 'string',  display: true,  hidden: false, orderable: true, listing: true, select: true, insert: true, quick_edit: true, relation: false, validate: false},
-    password: {label: 'Password', type: 'string',  display: false, hidden: true,  orderable: true, listing: true, select: true, insert: true, quick_edit: true, relation: false, validate: false},
-    roles:    {label: 'Roles',    type:  null,     display: false, hidden: true,  orderable: true, listing: true, select: true, insert: true, quick_edit: true, relation: {type: 'many', alias: 'roles_name'}, validate: false},
-    company:  {label: 'Password', type: 'integer', display: false, hidden: true,  orderable: true, listing: true, select: true, insert: true, quick_edit: true, relation: {type: 'one',  alias: 'company_name'}, validate: false},
+    username: {
+      label: 'Username',
+      type: 'string',
+      listing: true,
+      form: true,
+      display: true,
+      hidden: false,
+      orderable: true,
+      quick_edit: true,
+      select: true,
+      insert: true,
+      relation: null,
+    },
+    email: {
+      label: 'Email',
+      type: 'string',
+      listing: true,
+      form: true,
+      display: true,
+      hidden: false,
+      orderable: true,
+      quick_edit: true,
+      select: true,
+      insert: true,
+      relation: null,
+    },
+    password: {
+      label: 'Password',
+      type: 'string',
+      listing: true,
+      form: true,
+      display: false,
+      hidden: false,
+      orderable: false,
+      quick_edit: false,
+      select: true,
+      insert: true,
+      relation: null,
+    },
+    roles: {
+      label: 'Roles',
+      type: 'relation',
+      listing: true,
+      form: true,
+      select: true,
+      insert: false,
+      relation: {
+        type: 'belongsToMany',
+        alias: 'roles_name',
+      },
+    },
+    company: {
+      label: 'Company',
+      type: 'integer',
+      listing: true,
+      form: true,
+      select: true,
+      insert: true,
+      relation: {
+        type: 'belongsTo',
+        alias: 'company_name'
+      },
+    },
   };
 
   User.module = 'user';

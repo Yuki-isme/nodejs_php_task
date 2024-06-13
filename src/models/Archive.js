@@ -1,4 +1,4 @@
-const Model = require('../models/Model');
+const Model = require('./Model_Ignore');
 
 const Archive = {
     fieldDefs: [

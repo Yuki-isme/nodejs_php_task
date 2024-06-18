@@ -29,7 +29,7 @@
                     </button>
                 </div>
                  <div class="button-action">
-                    <a href="<%- url %>bill" class="btn btn-outline-success">
+                    <a href="bill" class="btn btn-outline-success">
                         View Bill Items
                     </a>
                 </div>
@@ -54,11 +54,6 @@
                     <div id="<%- data.module %>_select">
                         <select multiple>
                             <option value="select_all">All</option>
-                            <% data.columns.forEach((column, index) => { %>
-                                <% if (column.display && column.hidden === true) { %>
-                                    <option id="visible_<%- column.field %>" value="<%- btoa(JSON.stringify(column)) %>"><%- column.label %></option>
-                                <% } %>
-                            <% }); %>
                         </select>
                     </div>
                     <div class="button-action">
@@ -71,11 +66,7 @@
                     <thead></thead>
                     <tfoot>
                         <tr>
-                            <% data.columns.forEach((column, index) => { %>
-                                <% if (column.display) { %>
-                                    <th><%- column.label %></th>
-                                <% } %>
-                            <% }); %>
+
                         </tr>
                     </tfoot>
                     <tbody></tbody>

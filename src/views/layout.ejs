@@ -39,12 +39,7 @@
     <script src="/lib/calendar-date-time-picker/js/mobiscroll.jquery.min.js"></script>
     <script src="/lib/jquery-validate/dist/jquery.validate.js"></script>
     <script src="/js/script.js"></script>
-    <script>dateTime.__init(<%- JSON.stringify(data.dateFormat) %>, <%- JSON.stringify(data.timeFormat) %>)</script>
-    <% if (view === 'page.listing.ejs') { %>
-        <script>listJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
-    <% } else { %>
-        <script>formJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
-    <% } %>
+
 </body>
 
 </html>

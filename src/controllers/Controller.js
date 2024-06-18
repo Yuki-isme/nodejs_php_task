@@ -2,34 +2,32 @@ const db = require('../models/index.js');
 const {Model} = require("sequelize");
 
 class Controller {
-    constructor() {
-        const render = async (req, res, view, title, data) => {
-            const dataBase = {
-                url: process.env.PORT === '80' ? `${process.env.HTTP}${process.env.HOST_NAME}/` : `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`,
-                dateFormat: global.DateTime.dateFormat,
-                timeFormat: global.DateTime.timeFormat,
-            };
-            data = Object.assign(dataBase, data);
-            await this._render(req, res, view, title, data);
+    // Private method
+    static async #render(req, res, view, title, data) {
+        const dataBase = {
+            url: process.env.PORT === '80' ? `${process.env.HTTP}${process.env.HOST_NAME}/` : `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`,
+            dateFormat: global.DateTime.dateFormat,
+            timeFormat: global.DateTime.timeFormat,
         };
-
-        // Protected method index
-        this.index = async (req, res, model) => {
-            let columns = db[model].fieldDef;
-            const data = {
-                columns: columns,
-                module: db[model].name,
-                filter: req.session.module[model.module].listing.filter,
-                search: req.session.module[model.module].listing.search
-            }
-            await this._render(req, res, 'page.listing.ejs', db[model].name.toUpperCase(), data);
-        };
-
-        // Private method _render
-        this._render = async (req, res, view, title, data) => {
-            await res.render(view, { title, data });
-        };
+        data = Object.assign(dataBase, data);
+        await res.render('layout', {view, title, data });
     }
+
+    // Protected method (convention)
+    static async _index(req, res, model) {
+        let columns = db[model].fieldDef;
+        let title = `${db[model].name.charAt(0).toUpperCase()}${db[model].name.slice(1)}`;
+        const data = {
+            columns: columns,
+            module: db[model].name,
+            filter: req?.session?.module[model?.module]?.listing?.filter,
+            search: req?.session?.module[model?.module]?.listing?.search
+        };
+        await Controller.#render(req, res, 'page.listing.ejs', title, data);
+    }
+}
+
+module.exports = Controller;
 
     // formPage: async (req, res, model, title, data) => {
     //     let formProperties = ['field', 'label', 'validate', 'onlySelect', 'relation'];
@@ -91,6 +89,3 @@ class Controller {
     //
     //     res.json({selected: req.session.module[model.module].listing.selected.length});
     // },
-}
-
-module.exports = Controller;

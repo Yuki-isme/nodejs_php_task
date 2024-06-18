@@ -1,0 +1,27 @@
+                    <div id="<%- data.module %>_select">
+                        <select multiple>
+                            <option value="select_all">All</option>
+                            <% data.columns.forEach((column, index) => { %>
+                                <% if (column.display && column.hidden === true) { %>
+                                    <option id="visible_<%- column.field %>" value="<%- btoa(JSON.stringify(column)) %>"><%- column.label %></option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <tfoot>
+                                            <tr>
+                                                <% data.columns.forEach((column, index) => { %>
+                                                    <% if (column.display) { %>
+                                                        <th><%- column.label %></th>
+                                                    <% } %>
+                                                <% }); %>
+                                            </tr>
+                                        </tfoot>
+
+                                            <script>dateTime.__init(<%- JSON.stringify(data.dateFormat) %>, <%- JSON.stringify(data.timeFormat) %>)</script>
+                                            <% if (view === 'page.listing.ejs') { %>
+                                                <script>listJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
+                                            <% } else { %>
+                                                <script>formJs.__init('<%- url %>', <%- JSON.stringify(data) %>)</script>
+                                            <% } %>

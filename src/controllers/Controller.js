@@ -1,6 +1,7 @@
 const db = require('../models/index.js');
 const {Model} = require("sequelize");
 const ejs = require('ejs');
+const fs = require('fs');
 
 class Controller {
     // Private method
@@ -14,6 +15,13 @@ class Controller {
         await res.render('layout', {module, view, title, data });
     }
 
+    static async _renderEjsFile(viewPath, data = {}) {
+
+        const template = fs.readFileSync(viewPath, 'utf-8');
+
+        return await ejs.render(template, data);
+    }
+
     // Protected method (convention)
     static async _index(req, res, module, data = {}) {
         let columns = db[module]?.fieldDef ?? [];
@@ -25,7 +33,7 @@ class Controller {
             search: req?.session?.module[module?.module]?.listing?.search
         };
         data = Object.assign(data, dataDefault);
-        await Controller.#render(req, res, module, 'listing.ejs', title, data);
+        await Controller.#render(req, res, module, 'index.ejs', title, data);
     }
 }
 

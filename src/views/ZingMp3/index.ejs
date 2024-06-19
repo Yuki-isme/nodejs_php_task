@@ -5,27 +5,27 @@
 
             <div class="clearfix"></div>
 
-            <div class="button-action">
-                <form action="/refreshToken" method="post">
-                    <button class="btn btn-outline-danger" type="submit">Refresh token</button>
-                </form>
-            </div>
-            <div class="button-action">
-                <form action="/logout" method="post">
-                    <button class="btn btn-outline-danger" type="submit">Logout</button>
-                </form>
-            </div>
+<!--            <div class="button-action">-->
+<!--                <form action="/refreshToken" method="post">-->
+<!--                    <button class="btn btn-outline-danger" type="submit">Refresh token</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--            <div class="button-action">-->
+<!--                <form action="/logout" method="post">-->
+<!--                    <button class="btn btn-outline-danger" type="submit">Logout</button>-->
+<!--                </form>-->
+<!--            </div>-->
 
             <div class="clearfix"></div>
         </div>
-        <div class="card-header flex flex-wrap justify-end">
-
+        <div class="card-header flex flex-wrap">
+            <div class="clearfix"></div>
             <% data.items.forEach((item, index) => { %>
                 <div class="<%- item?.classCss %>">
                     <% if(typeof item.items !== 'undefined') { %>
-                        <% item.items.forEach((childItem, index) => { %>
-                            <a href="<%- childItem.banner %>"></a>
-                        <% }); %>
+                        <% for (const [key, value] of Object.entries(item.items)) { %>
+                            <%- value.content %>
+                        <% }; %>
                     <% } %>
                 </div>
             <% }); %>

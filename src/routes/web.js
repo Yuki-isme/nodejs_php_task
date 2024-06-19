@@ -5,13 +5,16 @@ const AuthController = require('../controllers/AuthController');
 // const BillController = require('../controllers/BillController');
 // const ArchiveController = require('../controllers/ArchiveController');
 const UserController = require('../controllers/UserController');
+const ZingMp3Controller = require('../controllers/ZingMp3Controller');
 
 router.get('/login', AuthController.login);
 router.post('/auth', AuthController.auth);
 router.post('/refreshToken', AuthController.refreshToken);
 router.post('/logout', AuthController.logout);
 
-router.get('/', UserController.index);
+router.get('/', ZingMp3Controller.index);
+
+router.get('/zing-mp3', ZingMp3Controller.index);
 
 // const billRouter = express.Router();
 // billRouter.use(authenticateToken);

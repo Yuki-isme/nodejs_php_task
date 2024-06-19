@@ -1,29 +1,31 @@
 const db = require('../models/index.js');
 const {Model} = require("sequelize");
+const ejs = require('ejs');
 
 class Controller {
     // Private method
-    static async #render(req, res, view, title, data) {
+    static async #render(req, res, module, view, title, data) {
         const dataBase = {
             url: process.env.PORT === '80' ? `${process.env.HTTP}${process.env.HOST_NAME}/` : `${process.env.HTTP}${process.env.HOST_NAME}:${process.env.PORT}/`,
             dateFormat: global.DateTime.dateFormat,
             timeFormat: global.DateTime.timeFormat,
         };
         data = Object.assign(dataBase, data);
-        await res.render('layout', {view, title, data });
+        await res.render('layout', {module, view, title, data });
     }
 
     // Protected method (convention)
-    static async _index(req, res, model) {
-        let columns = db[model].fieldDef;
-        let title = `${db[model].name.charAt(0).toUpperCase()}${db[model].name.slice(1)}`;
-        const data = {
+    static async _index(req, res, module, data = {}) {
+        let columns = db[module]?.fieldDef ?? [];
+        let title = `${db[module]?.name.charAt(0).toUpperCase()}${db[module]?.name.slice(1)}` ?? module;
+        const dataDefault = {
             columns: columns,
-            module: db[model].name,
-            filter: req?.session?.module[model?.module]?.listing?.filter,
-            search: req?.session?.module[model?.module]?.listing?.search
+            module: db[module]?.name,
+            filter: req?.session?.module[module?.module]?.listing?.filter,
+            search: req?.session?.module[module?.module]?.listing?.search
         };
-        await Controller.#render(req, res, 'page.listing.ejs', title, data);
+        data = Object.assign(data, dataDefault);
+        await Controller.#render(req, res, module, 'listing.ejs', title, data);
     }
 }
 

@@ -42,7 +42,12 @@ class ZingMp3Controller extends Controller {
                                 let newReleaseData = { src: newReleaseValue.thumbnail, href: newReleaseValue.link };
                                 newReleaseContent += await super._renderEjsFile(itemPath, newReleaseData);
                             }
-                            data = {...data, content: newReleaseContent, key: key};
+                            let titleKey = {
+                                all: 'Tất cả',
+                                vPop: 'Việt Nam',
+                                others: 'Quốc tế',
+                            }
+                            data = {...data, content: newReleaseContent, title: titleKey[key]};
                             break;
                         case 'newReleaseChart':
                             break;

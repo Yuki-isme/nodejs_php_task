@@ -20,16 +20,21 @@
         </div>
         <div class="card-header flex flex-wrap">
             <div class="clearfix"></div>
-            <% data.items.forEach((item, index) => { %>
-                <div class="<%- item?.classCss %>">
-                    <% if(typeof item.items !== 'undefined') { %>
-                        <% for (const [key, value] of Object.entries(item.items)) { %>
-                            <%- value.content %>
-                        <% }; %>
-                    <% } %>
-                </div>
-            <% }); %>
-
+            <%- data.content.banner %>
+            <div class="clearfix"></div>
+            <%- data.content['new-release'] %>
+            <div class="clearfix"></div>
+            <%- data.content.playlist_hEditorTheme %>
+            <div class="clearfix"></div>
+            <%- data.content.playlist_hEditorTheme3 %>
+            <div class="clearfix"></div>
+            <%- data.content.playlist_hSeasonTheme %>
+            <div class="clearfix"></div>
+            <%- data.content.playlist_h100 %>
+            <div class="clearfix"></div>
+            <%- data.content.playlist_hAlbum %>
+            <div class="clearfix"></div>
+            <%- data.content.livestream %>
             <div class="clearfix"></div>
         </div>
         <div>

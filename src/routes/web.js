@@ -14,6 +14,8 @@ router.post('/logout', AuthController.logout);
 
 router.get('/', ZingMp3Controller.index);
 
+router.get('/getSong/:id', ZingMp3Controller.getSong);
+
 router.get('/zing-mp3', ZingMp3Controller.index);
 
 // const billRouter = express.Router();

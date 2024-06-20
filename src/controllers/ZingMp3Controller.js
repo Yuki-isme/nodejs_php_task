@@ -1,5 +1,5 @@
 const Controller = require('./Controller');
-const { ZingMp3 } = require("zingmp3-api-full");
+const { ZingMp3 } = require("zingmp3-api-full-v2");
 const path = require("node:path");
 
 class ZingMp3Controller extends Controller {
@@ -9,7 +9,7 @@ class ZingMp3Controller extends Controller {
         let contentSectionType = {};
 
         for (const [index, item] of Object.entries(items)) {
-            console.log(`${index}: `, {sectionType: item.sectionType, viewType: item.viewType, sectionId: item.sectionId, title: item.title, type: typeof item.items !== "undefined"});
+            // console.log(`${index}: `, {sectionType: item.sectionType, viewType: item.viewType, sectionId: item.sectionId, title: item.title, type: typeof item.items !== "undefined"});
 
             let classCss = [];
             if (item.sectionType) {
@@ -30,7 +30,7 @@ class ZingMp3Controller extends Controller {
                     let data = {}
                     switch (item.sectionType) {
                         case 'banner':
-                            data = {...data, src: value.banner, href: value.link};
+                            data = {...data, src: value.banner, href: value.link, songId: value.encodeId};
                             break;
                         case 'recentPlaylist':
                             break;
@@ -101,6 +101,19 @@ class ZingMp3Controller extends Controller {
         }
 
         await super._index(req, res, 'ZingMp3', { items: items, content: contentSectionType });
+    }
+
+    static async getSong (req, res) {
+        let song = await ZingMp3.getSong(req.params.id);
+        if (typeof song?.data !== 'undefined') {
+            if (typeof song.data['320'] !== 'undefined' && song.data['320'] !== 'VIP') {
+                res.json(song.data['320']);
+            } else {
+                res.json(song.data['128']);
+            }
+        } else {
+            res.json();
+        }
     }
 }
 
